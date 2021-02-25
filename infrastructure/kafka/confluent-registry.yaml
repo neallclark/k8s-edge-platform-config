@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: avro-schema-registry
+  name: avro-schema-registry
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avro-schema-registry
+  template:
+    metadata:
+      labels:
+        app: avro-schema-registry
+    spec:
+      containers:
+        - image: confluentinc/cp-schema-registry:latest
+          name: avro-schema-registry
+          env:
+            - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+              value: kafka-cluster-kafka-bootstrap.kafka:9092
+            - name: SCHEMA_REGISTRY_HOST_NAME
+              value: avro-schema-registry
+            - name: SCHEMA_REGISTRY_LISTENERS
+              value: http://0.0.0.0:8081              
+          resources:
+            limits:
+              memory: 1000Mi
+            requests:
+              memory: 1000Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: avro-schema-registry
+  name: avro-schema-registry
+  namespace: kafka
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8081
+      nodePort: 30081
+  selector:
+    app: avro-schema-registry
+  type: NodePort

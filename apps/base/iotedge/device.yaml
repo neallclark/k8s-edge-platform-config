@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: edge1
+spec:
+  releaseName: edge1
+  chart:
+    spec:
+      chart: edge-kubernetes
+      sourceRef:
+        kind: HelmRepository
+        name: microsoft-iotedge
+        namespace: flux-system
+      version: "0.2.11"
+  interval: 1h0m0s
+  install:
+    remediation:
+      retries: 3
+  valuesFrom:
+  - kind: Secret
+    name: device-connection-string-secret
+    valuesKey: device-connection-string
+    targetPath: provisioning.deviceConnectionString
+

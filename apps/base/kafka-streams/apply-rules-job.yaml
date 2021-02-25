@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apply-rules-job
+  namespace: kafka-streams
+  annotations:
+    fluxcd.io/automated: "true"
+    fluxcd.io/tag.apply-rules-jobd: glob:test-*
+    fluxcd.io/tag.init: glob:test-*
+  labels:
+    app: apply-rules-job
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: apply-rules-job
+  template:
+    metadata:
+      labels:
+        app: apply-rules-job
+    spec:
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+      - name: apply-rules-jobd
+        image: sodadeveloper.azurecr.io/boost-kafka-streams-edge:test-2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: kafka-cluster-kafka-bootstrap.kafka:9092
+        - name: CLASS
+          value: soda.ApplyRulesJob          
+        - name: APPLICATION_ID
+          value: streams-applyrules
+        - name: SOURCE_TOPIC
+          value: data
+        - name: SECONDARY_SOURCE_TOPIC
+          value: fieldrules
+        - name: OUTPUT_TOPIC
+          value: processeddata
+        - name: SECONDARY_OUTPUT_TOPIC
+          value: filterdata
+        - name: AVRO_SCHEMA_REGISTRY_URL
+          value: http://avro-schema-registry.kafka
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
