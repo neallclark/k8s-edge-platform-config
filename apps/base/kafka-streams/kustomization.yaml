@@ -6,4 +6,3 @@ resources:
   - apply-rules-job.yaml
   - label-data-job.yaml
   - namespace.yaml
-  - sealed-acr-pull-secret.yaml

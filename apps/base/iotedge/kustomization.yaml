@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: iotedge
 resources:
   - device.yaml
-  - sealed-device-connection-string-secret.yaml
+
