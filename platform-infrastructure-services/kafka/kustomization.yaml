@@ -2,10 +2,15 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kafka
 resources:
+  - cluster.yaml
+  - persistent-volumes.yaml
+  - confluent-registry.yaml
   - topic-data.yaml
   - topic-fieldrules.yaml
   - topic-filterdata.yaml
   - topic-jobstart.yaml
   - topic-outputdata.yaml
   - topic-processeddata.yaml
+
+
 
